@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test Web Server couse jQuery</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <div>
+            <input type="button" id="GetCourses" value="Get Courses" onclick="getCourses()"/><br/><br/>
+            <div id="courseContainer"></div>
+            <input type="button" id="CreateCourse" value="Create Course" onclick="createCourse()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtCourseTitle" placeholder="Course Title"/>
+            <input type="text" id="txtCourseDepartment" placeholder="Course Department"/><br/><br/>
+            <input type="button" id="GetCourse" value="Get Course" onclick="getCourse()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtCourseID" placeholder="Course ID"/>
+            <div id="courseContainer2"></div><br/>
+            <input type="button" id="UpdateCourse" value="Update Course" onclick="updateCourse()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtCourseID2" placeholder="CourseID"/>
+            <input type="text" id="txtCourseTitle2" placeholder="Course Title"/>
+            <input type="text" id="txtCourseDepartment2" placeholder="Course Department"/><br/><br/>
+            <input type="button" id="deleteCourse" value="Delete Course" onclick="deleteCourse()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtCourseID3" placeholder="Course ID"/><br/><br/>
+            <p id="Message"></p>
+        </div>
+
+        <script>
+        	function getCourses(){
+        		$.ajax({
+        			url: "http://localhost:8080/courses",
+        			type: "GET",
+        			success: function(data) {
+        				console.log(data);
+        				if (data.length > 0) {
+							var coursehtml = "<table><tr><td>Course ID</td><td>Course Title</td><td>Course Department</td></tr>"
+	        				$.each(data, function(index,value) {
+	        					coursehtml += "<tr><td>" + value.courseID + "</td><td>" + value.courseTitle + "</td><td>" + value.courseDepartment + "</td></tr>";
+	        				});
+	        				coursehtml += "</table>"
+	        				$("#courseContainer").html(coursehtml);
+        				}
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function createCourse(){
+        		var courseObj = {
+        			courseTitle: $("#txtCourseTitle").val(),
+        			courseDepartment: $("#txtCourseDepartment").val()
+        		};
+        		
+        		$.ajax({
+        			url: "http://localhost:8080/course",
+        			type: "POST",
+        			headers: {
+        				"Content-Type": "application/json"
+        			},
+        			data: JSON.stringify(courseObj),
+        			success: function(data) {
+        				console.log(data);
+        				$("#Message").html(data);
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				console.log(errorThrown);
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function getCourse(){
+        		$.ajax({
+        			url: "http://localhost:8080/course/" + $("#txtCourseID").val(),
+        			type: "GET",
+        			success: function(data) {
+        				console.log(data);
+						var coursehtml = "<table><tr><td>Course ID</td><td>Course Title</td><td>Course Department</td></tr>"
+	        			coursehtml += "<tr><td>" + data.courseID + "</td><td>" + data.courseTitle + "</td><td>" + data.courseDepartment + "</td></tr>";
+	        			coursehtml += "</table>"
+	        			$("#courseContainer2").html(coursehtml);
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function updateCourse(){
+        		var courseObj = {
+        			courseTitle: $("#txtCourseTitle2").val(),
+        			courseDepartment: $("#txtCourseDepartment2").val()
+        		};
+        		
+        		$.ajax({
+        			url: "http://localhost:8080/course/" + $("#txtCourseID2").val(),
+        			type: "PUT",
+        			headers: {
+        				"Content-Type": "application/json"
+        			},
+        			data: JSON.stringify(courseObj),
+        			success: function(data) {
+        				console.log(data);
+        				$("#Message").html(data);
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				console.log(errorThrown);
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function deleteCourse(){
+        		$.ajax({
+        			url: "http://localhost:8080/course/" + $("#txtCourseID3").val(),
+        			type: "DELETE",
+        			success: function(data) {
+        				console.log(data);
+						$("#Message").html(data);
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        </script>
+    </body>
+</html>

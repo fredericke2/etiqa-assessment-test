@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test Web Server student jQuery</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <div>
+            <input type="button" id="GetStudents" value="Get Students" onclick="getStudents()"/><br/><br/>
+            <div id="studentContainer"></div>
+            <input type="button" id="CreateStudent" value="Create Student" onclick="createStudent()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtFirstname" placeholder="Firstname"/>
+            <input type="text" id="txtLastname" placeholder="Lastname"/>
+            <input type="text" id="txtClassification" placeholder="Classification"/><br/><br/>
+            <input type="button" id="RegisterStudent" value="Register Student" onclick="registerStudent()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtStudentID" placeholder="StudentID"/>
+            <input type="text" id="txtCourseID" placeholder="CourseID"/><br/><br/>
+            <input type="button" id="GetStudent" value="Get Student" onclick="getStudent()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtStudentID2" placeholder="StudentID"/>
+            <div id="studentContainer2"></div><br/>
+            <input type="button" id="GetStudentByCourse" value="List Students By Course" onclick="GetStudentByCourse()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtCourseID3" placeholder="CourseID"/>
+            <div id="studentContainer3"></div><br/>
+            <input type="button" id="UpdateStudent" value="Update Student" onclick="updateStudent()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtStudentID3" placeholder="StudentID"/>
+            <input type="text" id="txtFirstname2" placeholder="Firstname"/>
+            <input type="text" id="txtLastname2" placeholder="Lastname"/>
+            <input type="text" id="txtClassification2" placeholder="Classification"/><br/><br/>
+            <input type="button" id="deleteStudent" value="Delete Student" onclick="deleteStudent()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtStudentID4" placeholder="StudentID"/><br/><br/>
+            <input type="button" id="DropStudent" value="Drop Student" onclick="dropStudent()"/><br/>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" id="txtStudentID5" placeholder="StudentID"/>
+            <input type="text" id="txtCourseID2" placeholder="CourseID"/>
+            <p id="Message"></p>
+        </div>
+
+        <script>
+        	function getStudents(){
+        		$.ajax({
+        			url: "http://localhost:8080/students",
+        			type: "GET",
+        			success: function(data) {
+        				console.log(data);
+        				if (data.length > 0) {
+							var studenthtml = "<table><tr><td>Student ID</td><td>First Name</td><td>Last Name</td><td>Classification</td></tr>"
+	        				$.each(data, function(index,value) {
+	        					studenthtml += "<tr><td>" + value.studentID + "</td><td>" + value.firstname + "</td><td>" + value.lastname + "</td><td>" + value.classification + "</td>";
+	        				});
+	        				studenthtml += "</table>"
+	        				$("#studentContainer").html(studenthtml);
+        				}
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function createStudent(){
+        		var studentObj = {
+        			firstname: $("#txtFirstname").val(),
+        			lastname: $("#txtLastname").val(),
+        			classification: $("#txtClassification").val()
+        		};
+        		
+        		$.ajax({
+        			url: "http://localhost:8080/student",
+        			type: "POST",
+        			headers: {
+        				"Content-Type": "application/json"
+        			},
+        			data: JSON.stringify(studentObj),
+        			success: function(data) {
+        				console.log(data);
+        				$("#Message").html(data);
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				console.log(errorThrown);
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function registerStudent(){
+        		var studentObj = {
+        			studentID: $("#txtStudentID").val(),
+        			courseID: $("#txtCourseID").val()
+        		};
+        		
+        		$.ajax({
+        			url: "http://localhost:8080/register",
+        			type: "POST",
+        			headers: {
+        				"Content-Type": "application/json"
+        			},
+        			data: JSON.stringify(studentObj),
+        			success: function(data) {
+        				console.log(data);
+        				$("#Message").html(data);
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				console.log(errorThrown);
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function getStudent(){
+        		$.ajax({
+        			url: "http://localhost:8080/student/" + $("#txtStudentID2").val(),
+        			type: "GET",
+        			success: function(data) {
+        				console.log(data);
+						var studenthtml = "<table><tr><td>Student ID</td><td>First Name</td><td>Last Name</td><td>Classification</td></tr>"
+	        			studenthtml += "<tr><td>" + data.studentID + "</td><td>" + data.firstname + "</td><td>" + data.lastname + "</td><td>" + data.classification + "</td>";
+	        			studenthtml += "</table>"
+	        			$("#studentContainer2").html(studenthtml);
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function GetStudentByCourse(){
+        		$.ajax({
+        			url: "http://localhost:8080/listbycourse/" + $("#txtCourseID3").val(),
+        			type: "GET",
+        			success: function(data) {
+        				console.log(data);
+        				if (data.length > 0) {
+							var studenthtml = "<table><tr><td>Student ID</td><td>First Name</td><td>Last Name</td><td>Classification</td></tr>"
+	        				$.each(data, function(index,value) {
+	        					studenthtml += "<tr><td>" + value[0] + "</td><td>" + value[1] + "</td><td>" + value[2] + "</td><td>" + value[3] + "</td></tr>";
+	        				});
+	        				studenthtml += "</table>"
+	        				$("#studentContainer3").html(studenthtml);
+        				}
+        				
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function updateStudent(){
+        		var studentObj = {
+        			firstname: $("#txtFirstname2").val(),
+        			lastname: $("#txtLastname2").val(),
+        			classification: $("#txtClassification2").val()
+        		};
+        		
+        		$.ajax({
+        			url: "http://localhost:8080/student/" + $("#txtStudentID3").val(),
+        			type: "PUT",
+        			headers: {
+        				"Content-Type": "application/json"
+        			},
+        			data: JSON.stringify(studentObj),
+        			success: function(data) {
+        				console.log(data);
+        				$("#Message").html(data);
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				console.log(errorThrown);
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function deleteStudent(){
+        		$.ajax({
+        			url: "http://localhost:8080/student/" + $("#txtStudentID4").val(),
+        			type: "DELETE",
+        			success: function(data) {
+        				console.log(data);
+						$("#Message").html(data);
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        	function dropStudent(){
+        		var studentObj = {
+        			studentID: $("#txtStudentID5").val(),
+        			courseID: $("#txtCourseID2").val(),
+        		};
+	        	$.ajax({
+        			url: "http://localhost:8080/drop",
+        			type: "POST",
+        			headers: {
+        				"Content-Type": "application/json"
+        			},
+        			data: JSON.stringify(studentObj),
+        			success: function(data) {
+        				console.log(data);
+        				$("#Message").html(data);
+        			},
+        			error: function (jqXHR, textStatus, errorThrown) {
+        				console.log(errorThrown);
+        				$("#Message").html(errorThrown);
+        			}
+         		});
+        	}
+        </script>
+    </body>
+</html>
